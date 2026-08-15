@@ -4,11 +4,11 @@ from typing import List
 from pydantic import field_validator
 
 class DatabaseSettings(BaseSettings):
-
   model_config = SettingsConfigDict(env_prefix = "POSTGRES_")
-  user: str = "tameer"
+
+  user: str = "creation"
   password: str = "change-me"
-  db: str = "tameer"
+  db: str = "creation"
   host: str = "postgres"
   port: int = 5432
 
@@ -20,8 +20,8 @@ class DatabaseSettings(BaseSettings):
     )
 
 class AuthSettings(BaseSettings):
-
   model_config = SettingsConfigDict(env_prefix = "JWT_")
+
   secret_key: str = "change-me"
   algorithm: str = "HS256"
   access_token_expire_minutes: int = 30
