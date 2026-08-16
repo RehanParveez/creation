@@ -2,7 +2,7 @@ from app.core.config import get_settings
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import AsyncSessionLocal
-from fastapi import Depends, Request
+from fastapi import Request
 
 settings = get_settings()
 

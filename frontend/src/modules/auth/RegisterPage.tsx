@@ -1669,10 +1669,6 @@ export default function RegisterPage() {
           }
         }
 
-        /* =========================================================
-           MOBILE
-        ========================================================= */
-
         @media (max-width: 560px) {
           .register-header {
             padding-left: 14px;
@@ -2043,8 +2039,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* ORGANIZATION */}
-
             <div className="field">
               <label
                 className="field-label"
@@ -2073,8 +2067,6 @@ export default function RegisterPage() {
                 />
               </div>
             </div>
-
-            {/* PASSWORD */}
 
             <div className="field">
               <label
@@ -2199,8 +2191,6 @@ export default function RegisterPage() {
                 )}
               </div>
             </div>
-
-            {/* SUBMIT */}
 
             <button
               type="submit"
