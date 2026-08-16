@@ -1,16 +1,17 @@
 import { useState } from 'react'
+import { ArrowLeft, ArrowRight, CheckCircle2, Loader2, Mail, ShieldCheck } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { HardHat, ArrowLeft, Loader2, Mail, CheckCircle } from 'lucide-react'
+
 import { api } from '@/services/api'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
     setError('')
     setLoading(true)
 
@@ -18,7 +19,10 @@ export default function ForgotPasswordPage() {
       await api.requestPasswordReset(email)
       setSubmitted(true)
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Request failed')
+      setError(
+        err.response?.data?.message ||
+          'We could not process your request. Please try again.',
+      )
     } finally {
       setLoading(false)
     }
@@ -26,32 +30,36 @@ export default function ForgotPasswordPage() {
 
   if (submitted) {
     return (
-      <div>
-        <div className="mb-7 flex h-11 w-11 items-center justify-center rounded-xl bg-[#171717]">
-          <HardHat className="h-5 w-5 text-[#e8890c]" />
-        </div>
+      <div className="cp-auth-form-page">
+        <Header
+          eyebrow="Account recovery"
+          title={<>Check your<br />inbox.</>}
+          body="If the account exists, we have sent instructions to securely reset your password."
+        />
 
-        <div className="rounded-2xl border border-[#deded9] bg-white p-8 text-center shadow-[0_16px_50px_rgba(0,0,0,0.06)]">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50">
-            <CheckCircle className="h-7 w-7 text-emerald-600" />
+        <div className="cp-form-card cp-success-card">
+          <div className="cp-success-icon">
+            <CheckCircle2 />
           </div>
 
-          <h2 className="mt-5 text-xl font-semibold text-[#171717]">
-            Check your email
-          </h2>
+          <h2>Reset instructions sent</h2>
 
-          <p className="mt-2 text-sm leading-6 text-[#6b7280]">
-            If an account exists for{' '}
-            <span className="font-medium text-[#333]">{email}</span>, we've sent
-            password reset instructions.
+          <p>
+            If an account exists for <strong>{email}</strong>, you will
+            receive an email with instructions for choosing a new password.
           </p>
 
-          <Link
-            to="/login"
-            className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[#c66f00] hover:text-[#a95d00]"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to login
+          <div className="cp-security-note">
+            <ShieldCheck />
+            <span>
+              For security, we do not reveal whether an email address is
+              registered with the workspace.
+            </span>
+          </div>
+
+          <Link className="cp-secondary-button" to="/login">
+            <ArrowLeft />
+            Back to sign in
           </Link>
         </div>
       </div>
@@ -59,71 +67,75 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div>
-      <div className="mb-7">
-        <div className="mb-6 flex h-11 w-11 items-center justify-center rounded-xl bg-[#171717]">
-          <HardHat className="h-5 w-5 text-[#e8890c]" />
-        </div>
+    <div className="cp-auth-form-page">
+      <Header
+        eyebrow="Account recovery"
+        title={<>Recover your<br />access.</>}
+        body="Enter your work email and we will send a secure password reset link."
+      />
 
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#e8890c]">
-          Account recovery
-        </p>
+      <div className="cp-form-card">
+        <form onSubmit={handleSubmit}>
+          {error && <div className="cp-form-error">{error}</div>}
 
-        <h1 className="mt-3 text-3xl font-semibold tracking-[-0.035em] text-[#171717]">
-          Reset password
-        </h1>
+          <div className="cp-form-field">
+            <label htmlFor="recovery-email">Work email</label>
 
-        <p className="mt-2 text-sm leading-6 text-[#6b7280]">
-          Enter your work email and we'll send you instructions to recover your account.
-        </p>
-      </div>
-
-      <div className="rounded-2xl border border-[#deded9] bg-white p-6 shadow-[0_16px_50px_rgba(0,0,0,0.06)] sm:p-8">
-        {error && (
-          <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-[#262626]">
-              Work email
-            </label>
-
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#999]" />
-
+            <div className="cp-input-wrap">
+              <Mail />
               <input
+                id="recovery-email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(event) => setEmail(event.target.value)}
                 placeholder="name@company.com"
-                className="h-12 w-full rounded-xl border border-[#d9d9d4] bg-[#fafaf8] pl-10 pr-4 text-sm outline-none transition placeholder:text-[#a1a1aa] focus:border-[#e8890c] focus:bg-white focus:ring-4 focus:ring-[#e8890c]/10"
                 required
               />
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#e8890c] text-sm font-semibold text-white transition hover:bg-[#d47b08] focus:outline-none focus:ring-4 focus:ring-[#e8890c]/20 disabled:opacity-60"
-          >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Send reset link'}
+          <button className="cp-primary-button" type="submit" disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin" />
+                Sending request
+              </>
+            ) : (
+              <>
+                Send reset link
+                <ArrowRight />
+              </>
+            )}
           </button>
-        </form>
 
-        <div className="mt-6 border-t border-[#eeeeea] pt-6 text-center">
-          <Link
-            to="/login"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#777] hover:text-[#333]"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to login
+          <Link className="cp-inline-back" to="/login">
+            <ArrowLeft />
+            Back to sign in
           </Link>
-        </div>
+        </form>
       </div>
+    </div>
+  )
+}
+
+function Header({
+  eyebrow,
+  title,
+  body,
+}: {
+  eyebrow: string
+  title: React.ReactNode
+  body: string
+}) {
+  return (
+    <div className="cp-form-intro">
+      <span className="cp-form-eyebrow">
+        <i />
+        {eyebrow}
+      </span>
+
+      <h1>{title}</h1>
+      <p>{body}</p>
     </div>
   )
 }

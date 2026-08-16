@@ -1,165 +1,184 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, HardHat, ArrowRight, Loader2 } from 'lucide-react'
+import {
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Loader2,
+  LockKeyhole,
+  Mail,
+  ShieldCheck,
+} from 'lucide-react'
+
 import { api } from '@/services/api'
 import { useAuthStore } from '@/app/store'
 
 export default function LoginPage() {
   const navigate = useNavigate()
   const { setUser, setOrganization, setOrganizations } = useAuthStore()
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
     setError('')
     setLoading(true)
 
     try {
       await api.login(email, password)
+
       const user = await api.getMe()
       setUser(user)
 
-      const orgs = await api.getMyOrganizations()
-      setOrganizations(orgs)
+      const organizations = await api.getMyOrganizations()
+      setOrganizations(organizations)
 
-      if (orgs.length > 0) {
-        setOrganization(orgs[0])
-        localStorage.setItem('current_org_id', orgs[0].id)
+      if (organizations.length > 0) {
+        setOrganization(organizations[0])
+        localStorage.setItem('current_org_id', organizations[0].id)
       }
 
       navigate('/dashboard')
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Invalid credentials')
+      setError(
+        err.response?.data?.message ||
+          'Invalid credentials. Please check your email and password.',
+      )
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div>
-      <div className="mb-8">
-        <div className="mb-7 flex h-11 w-11 items-center justify-center rounded-xl bg-[#171717]">
-          <HardHat className="h-5 w-5 text-[#e8890c]" />
-        </div>
-
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#e8890c]">
+    <div className="cp-auth-form-page">
+      <div className="cp-form-intro">
+        <span className="cp-form-eyebrow">
+          <i />
           Workspace access
-        </p>
+        </span>
 
-        <h1 className="mt-3 text-3xl font-semibold tracking-[-0.035em] text-[#171717]">
-          Welcome back
+        <h1>
+          Welcome
+          <br />
+          back.
         </h1>
 
-        <p className="mt-2 text-sm leading-6 text-[#6b7280]">
-          Sign in to continue to your construction workspace.
-        </p>
+        <p>Sign in to continue managing your construction operations.</p>
       </div>
 
-      <div className="rounded-2xl border border-[#deded9] bg-white p-6 shadow-[0_16px_50px_rgba(0,0,0,0.06)] sm:p-8">
-        {error && (
-          <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
-          </div>
-        )}
+      <div className="cp-form-card">
+        <form onSubmit={handleSubmit}>
+          {error && <div className="cp-form-error">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-[#262626]">
-              Work email
-            </label>
+          <Field
+            label="Work email"
+            icon={<Mail />}
+            type="email"
+            value={email}
+            placeholder="name@company.com"
+            onChange={setEmail}
+          />
 
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@company.com"
-              className="h-12 w-full rounded-xl border border-[#d9d9d4] bg-[#fafaf8] px-4 text-sm text-[#171717] outline-none transition placeholder:text-[#a1a1aa] focus:border-[#e8890c] focus:bg-white focus:ring-4 focus:ring-[#e8890c]/10"
-              required
-            />
-          </div>
-
-          <div>
-            <div className="mb-2 flex items-center justify-between">
-              <label className="block text-sm font-medium text-[#262626]">
-                Password
-              </label>
-
-              <Link
-                to="/forgot-password"
-                className="text-xs font-semibold text-[#c66f00] hover:text-[#a95d00]"
-              >
-                Forgot password?
-              </Link>
+          <div className="cp-form-field">
+            <div className="cp-label-row">
+              <label htmlFor="password">Password</label>
+              <Link to="/forgot-password">Forgot password?</Link>
             </div>
 
-            <div className="relative">
+            <div className="cp-input-wrap">
+              <LockKeyhole />
               <input
+                id="password"
+                name="password"
                 type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(event) => setPassword(event.target.value)}
                 placeholder="Enter your password"
-                className="h-12 w-full rounded-xl border border-[#d9d9d4] bg-[#fafaf8] px-4 pr-12 text-sm text-[#171717] outline-none transition placeholder:text-[#a1a1aa] focus:border-[#e8890c] focus:bg-white focus:ring-4 focus:ring-[#e8890c]/10"
                 required
               />
-
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-[#8b8b8b] hover:bg-black/5 hover:text-[#333]"
+                className="cp-input-action"
+                onClick={() => setShowPassword((value) => !value)}
+                aria-label="Toggle password visibility"
               >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
+                {showPassword ? <EyeOff /> : <Eye />}
               </button>
             </div>
           </div>
 
-          <label className="flex cursor-pointer items-center gap-2.5">
-            <input
-              type="checkbox"
-              className="h-4 w-4 rounded border-[#cfcfc9] text-[#e8890c] focus:ring-[#e8890c]/20"
-            />
-            <span className="text-sm text-[#6b7280]">Remember me</span>
+          <label className="cp-check-row">
+            <input type="checkbox" />
+            <span>Keep me signed in</span>
           </label>
 
           <button
+            className="cp-primary-button"
             type="submit"
             disabled={loading}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#e8890c] px-4 text-sm font-semibold text-white transition hover:bg-[#d47b08] focus:outline-none focus:ring-4 focus:ring-[#e8890c]/20 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <>
+                <Loader2 className="animate-spin" />
+                Authenticating
+              </>
             ) : (
               <>
-                <span>Log in</span>
-                <ArrowRight className="h-4 w-4" />
+                Sign in to workspace
+                <ArrowRight />
               </>
             )}
           </button>
         </form>
 
-        <div className="mt-7 border-t border-[#eeeeea] pt-6 text-center">
-          <p className="text-sm text-[#777]">
-            Don't have an organization yet?{' '}
-            <Link
-              to="/register"
-              className="font-semibold text-[#c66f00] hover:text-[#a95d00]"
-            >
-              Create one
-            </Link>
-          </p>
+        <div className="cp-secure-strip">
+          <ShieldCheck />
+          Organization-scoped secure access
         </div>
       </div>
 
-      <p className="mt-6 text-center text-xs text-[#999]">
-        Secure organization workspace
+      <p className="cp-form-bottom">
+        Do not have an organization yet?{' '}
+        <Link to="/register">Create workspace</Link>
       </p>
+    </div>
+  )
+}
+
+function Field({
+  label,
+  icon,
+  type,
+  value,
+  placeholder,
+  onChange,
+}: {
+  label: string
+  icon: React.ReactNode
+  type: string
+  value: string
+  placeholder: string
+  onChange: (value: string) => void
+}) {
+  return (
+    <div className="cp-form-field">
+      <label>{label}</label>
+
+      <div className="cp-input-wrap">
+        {icon}
+        <input
+          type={type}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+          required
+        />
+      </div>
     </div>
   )
 }
