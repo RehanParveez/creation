@@ -12,13 +12,13 @@ export interface TokenPair {
 export interface User {
   id: string
   email: string
-  full_name: string
-  phone?: string
-  avatar_url?: string
-  email_verified: boolean
-  status: string
-  last_login_at?: string
-  created_at: string
+  first_name: string
+  last_name: string
+  is_active: boolean
+  is_verified: boolean
+  last_login_at?: string | null
+  permissions?: string[]
+  roles?: string[]
 }
 
 export interface Organization {
@@ -126,13 +126,38 @@ class ApiService {
     }
   }
 
-  async register(email: string, password: string, full_name: string, organization_name?: string) {
-    const res = await this.client.post('/auth/register', { email, password, full_name, organization_name })
-    const { user, tokens } = res.data
-    this.setTokens(tokens)
-    return { user, tokens }
+  async register(
+  email: string,
+  password: string,
+  first_name: string,
+  last_name: string,
+) {
+  const res = await this.client.post('/auth/register', {
+    email,
+    password,
+    first_name,
+    last_name,
+  })
+
+  const {
+    user,
+    access_token,
+    refresh_token,
+    token_type,
+    expires_in,
+  } = res.data
+
+  const tokens: TokenPair = {
+    access_token,
+    refresh_token,
+    token_type,
+    expires_in,
   }
 
+  this.setTokens(tokens)
+
+  return { user, tokens }
+}
   async login(email: string, password: string) {
     const res = await this.client.post('/auth/login', { email, password })
     const tokens: TokenPair = res.data
@@ -154,12 +179,17 @@ class ApiService {
   }
 
   async requestPasswordReset(email: string) {
-    return this.client.post('/auth/password-reset-request', { email })
-  }
+  return this.client.post('/auth/forgot-password', {
+    email,
+  })
+}
 
   async resetPassword(token: string, new_password: string) {
-    return this.client.post('/auth/password-reset', { token, new_password })
-  }
+   return this.client.post('/auth/reset-password', {
+    token,
+    new_password,
+  })
+}
 
   async createOrganization(data: Partial<Organization>) {
     return this.client.post('/organizations', data)

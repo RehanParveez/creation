@@ -58,7 +58,11 @@ class Settings(BaseSettings):
   app_env: str = "development"
   app_debug: bool = True
   app_secret_key: str = "change-me"
-  backend_cors_origins: List[str] = ["http://localhost:5093"]
+  backend_cors_origins: List[str] = [
+    "http://localhost:5093",
+    "http://127.0.0.1:5093",
+    "http://172.29.240.1:5093",
+  ]
   database: DatabaseSettings = DatabaseSettings()
   auth: AuthSettings = AuthSettings()
   ai: AISettings = AISettings()

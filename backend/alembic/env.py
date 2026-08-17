@@ -8,6 +8,8 @@ from sqlalchemy import pool
 import asyncio
 from sqlalchemy.ext.asyncio import async_engine_from_config
 from app.models.base import Base
+import app.modules.identity.models 
+import app.modules.organizations.models
 
 settings = get_settings()
 config = context.config
