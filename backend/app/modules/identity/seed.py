@@ -2,6 +2,7 @@ from __future__ import annotations
 from app.modules.identity.models import Permission, Role
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 SYSTEM_ROLES = {
     "Company Admin": "Full access to the organization workspace.",
@@ -122,7 +123,9 @@ async def seed_identity_data(session: AsyncSession) -> None:
 
     for name, description in SYSTEM_ROLES.items():
         result = await session.execute(
-            select(Role).where(Role.name == name)
+            select(Role)
+            .options(selectinload(Role.permissions))
+            .where(Role.name == name)
         )
         role = result.scalar_one_or_none()
 
@@ -136,10 +139,19 @@ async def seed_identity_data(session: AsyncSession) -> None:
 
         desired_permissions = ROLE_PERMISSIONS.get(name, set())
 
-        role.permissions = [
-            permission_map[code]
-            for code in desired_permissions
-            if code in permission_map
-        ]
+        if role is None:
+            role = Role(
+                name=name,
+                description=description,
+                is_system=True,
+            )
+            session.add(role)
+            await session.flush() 
+
+        desired_permissions = ROLE_PERMISSIONS.get(name, set())
+        role.permissions.clear()
+        for code in desired_permissions:
+            if code in permission_map:
+                role.permissions.append(permission_map[code])
 
     await session.commit()

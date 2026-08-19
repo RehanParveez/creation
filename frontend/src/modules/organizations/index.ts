@@ -1,1 +1,5 @@
 export * from './types'
+export { default as OrganizationsPage } from './pages/OrganizationsPage'
+export { default as CreateOrganizationPage } from './pages/CreateOrganizationPage'
+export { default as OrganizationDetailsPage } from './pages/OrganizationDetailsPage'
+export { default as TeamPage } from './pages/TeamPage'

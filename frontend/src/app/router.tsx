@@ -8,6 +8,10 @@ import ResetPasswordPage from '@/modules/auth/pages/ResetPasswordPage'
 import DashboardPage from '@/modules/dashboard/DashboardPage'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import PublicRoute from '@/components/auth/PublicRoute'
+import OrganizationsPage from '@/modules/organizations/pages/OrganizationsPage'
+import CreateOrganizationPage from '@/modules/organizations/pages/CreateOrganizationPage'
+import OrganizationDetailsPage from '@/modules/organizations/pages/OrganizationDetailsPage'
+import TeamPage from '@/modules/organizations/pages/TeamPage'
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +51,36 @@ export const router = createBrowserRouter([
             path: '/dashboard',
             element: <DashboardPage />,
           },
+          {
+            path: '/organizations',
+            element: <OrganizationsPage />,
+          },
+          {
+            path: '/organizations/new',
+            element: <CreateOrganizationPage />,
+          },
+          {
+            path: '/organizations/:orgId',
+            element: <OrganizationDetailsPage />,
+          },
+          {
+            path: '/organizations/:orgId/team',
+            element: <TeamPage />,
+          },
+          {
+            path: '/team',
+            element: <TeamPage />,
+          },
+
+          { 
+            path: '/projects', 
+            element: <div className="p-6 text-zinc-100">Projects Module Coming Soon</div>
+          },
+          { 
+            path: '/settings', 
+            element: <div className="p-6 text-zinc-100">Settings Module Coming Soon</div>
+          },
+
           {
             path: '/',
             element: <Navigate to="/dashboard" replace />,

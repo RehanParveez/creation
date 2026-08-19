@@ -88,3 +88,7 @@ export interface InviteMemberInput {
   role_id: string
   full_name?: string
 }
+
+export type Membership = OrganizationMembership
+export type Role = OrganizationRole
+export type Permission = OrganizationPermission

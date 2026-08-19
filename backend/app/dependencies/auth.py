@@ -9,6 +9,8 @@ import jwt
 from uuid import UUID
 from app.core.security import decode_token
 from app.modules.identity.repository import UserRepository
+from sqlalchemy import select
+from app.modules.identity.models import Permission, Role, RolePermission, UserRole
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -63,3 +65,26 @@ async def get_current_user(
     )
 
   return user
+
+def require_permissions(required_codes: list[str]):
+  async def dependency(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+  ) -> User:
+    stmt = (
+      select(Permission.code)
+      .join(RolePermission, RolePermission.permission_id == Permission.id)
+      .join(Role, Role.id == RolePermission.role_id)
+      .join(UserRole, UserRole.role_id == Role.id)
+      .where(UserRole.user_id == current_user.id, Permission.code.in_(required_codes))
+    )
+    result = await db.execute(stmt)
+    found_permissions = result.scalars().all()
+    if not found_permissions:
+      raise TameerException(
+        code = "FORBIDDEN",
+        message = "You do not have the required permissions to perform this action.",
+        status_code=403,
+      )
+    return current_user
+  return dependency
