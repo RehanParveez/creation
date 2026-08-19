@@ -12,6 +12,8 @@ import OrganizationsPage from '@/modules/organizations/pages/OrganizationsPage'
 import CreateOrganizationPage from '@/modules/organizations/pages/CreateOrganizationPage'
 import OrganizationDetailsPage from '@/modules/organizations/pages/OrganizationDetailsPage'
 import TeamPage from '@/modules/organizations/pages/TeamPage'
+import {ProjectsPage, CreateProjectPage, ProjectDetailsPage, ClientsPage, ProjectClientsPage,
+} from '@/modules/projects'
 
 export const router = createBrowserRouter([
   {
@@ -72,13 +74,26 @@ export const router = createBrowserRouter([
             element: <TeamPage />,
           },
 
-          { 
-            path: '/projects', 
-            element: <div className="p-6 text-zinc-100">Projects Module Coming Soon</div>
+          {
+            path: '/projects',
+            element: <ProjectsPage />,
           },
-          { 
-            path: '/settings', 
-            element: <div className="p-6 text-zinc-100">Settings Module Coming Soon</div>
+
+          {
+            path: '/projects/new',
+            element: <CreateProjectPage />,
+          },
+          {
+            path: '/projects/:projectId',
+            element: <ProjectDetailsPage />,
+          },
+          {
+            path: '/projects/:projectId/client',
+            element: <ProjectClientsPage />,
+          },
+          {
+            path: '/clients',
+            element: <ClientsPage />,
           },
 
           {

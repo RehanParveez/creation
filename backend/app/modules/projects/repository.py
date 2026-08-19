@@ -1,81 +1,238 @@
-from sqlalchemy.orm import Session
+from __future__ import annotations
+from uuid import UUID
+from sqlalchemy import delete, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.projects.models import Client, Project, Milestone, ProjectMember
 
-class BaseProjectRepo:
-  def update(self, db: Session, db_obj, obj_in: dict):
+class BaseProjectRepository:
+  async def update(
+    self,
+    db: AsyncSession,
+    db_obj,
+    obj_in: dict,
+  ):
     for field, value in obj_in.items():
       if value is not None:
         setattr(db_obj, field, value)
-    db.commit()
-    db.refresh(db_obj)
+    await db.commit()
+    await db.refresh(db_obj)
     return db_obj
-  def delete(self, db: Session, db_obj):
-    db.delete(db_obj)
-    db.commit()
-    
-class ClientRepository(BaseProjectRepo):
-    
-  def create(self, db: Session, obj_in: dict) -> Client:
+
+  async def delete(
+    self,
+    db: AsyncSession,
+    db_obj,
+  ) -> None:
+    await db.delete(db_obj)
+    await db.commit()
+
+class ClientRepository(BaseProjectRepository):
+  async def create(
+    self,
+    db: AsyncSession,
+    obj_in: dict,
+  ) -> Client:
     db_obj = Client(**obj_in)
+
     db.add(db_obj)
-    db.commit()
-    db.refresh(db_obj)
+    await db.commit()
+    await db.refresh(db_obj)
     return db_obj
 
-  def get_by_org(self, db: Session, organization_id: str, skip: int = 0, limit: int = 100):
-    return db.query(Client).filter(Client.organization_id == organization_id).offset(skip).limit(limit).all()
+  async def get_by_org(
+    self,
+    db: AsyncSession,
+    organization_id: UUID,
+    skip: int = 0,
+    limit: int = 100,
+  ) -> list[Client]:
 
-  def get_by_id_and_org(self, db: Session, client_id: str, organization_id: str):
-    return db.query(Client).filter(Client.id == client_id, Client.organization_id == organization_id).first()
+    stmt = (
+      select(Client)
+      .where(Client.organization_id == organization_id)
+      .offset(skip)
+      .limit(limit)
+    )
 
-class ProjectRepository(BaseProjectRepo):
-    
-  def create(self, db: Session, obj_in: dict) -> Project:
+    result = await db.execute(stmt)
+    return list(result.scalars().all())
+
+  async def get_by_id_and_org(
+    self,
+    db: AsyncSession,
+    client_id: str,
+    organization_id: UUID,
+  ) -> Client | None:
+
+    stmt = (
+      select(Client)
+      .where(
+        Client.id == client_id,
+        Client.organization_id == organization_id,
+      )
+    )
+    result = await db.execute(stmt)
+    return result.scalar_one_or_none()
+
+class ProjectRepository(BaseProjectRepository):
+
+  async def create(
+    self,
+    db: AsyncSession,
+    obj_in: dict,
+  ) -> Project:
+
     db_obj = Project(**obj_in)
+
     db.add(db_obj)
-    db.commit()
-    db.refresh(db_obj)
+
+    await db.commit()
+    await db.refresh(db_obj)
+
     return db_obj
 
-  def get_by_org(self, db: Session, organization_id: str, skip: int = 0, limit: int = 100):
-    return db.query(Project).filter(Project.organization_id == organization_id).offset(skip).limit(limit).all()
+  async def get_by_org(
+    self,
+    db: AsyncSession,
+    organization_id: UUID,
+    skip: int = 0,
+    limit: int = 100,
+  ) -> list[Project]:
 
-  def get_by_id_and_org(self, db: Session, project_id: str, organization_id: str):
-    return db.query(Project).filter(Project.id == project_id, Project.organization_id == organization_id).first()
+    stmt = (
+      select(Project)
+      .where(Project.organization_id == organization_id)
+      .offset(skip)
+      .limit(limit)
+    )
+    result = await db.execute(stmt)
+    return list(result.scalars().all())
 
-class MilestoneRepository(BaseProjectRepo):
-    
-  def create(self, db: Session, obj_in: dict) -> Milestone:
+  async def get_by_id_and_org(
+    self,
+    db: AsyncSession,
+    project_id: str,
+    organization_id: UUID,
+  ) -> Project | None:
+
+    stmt = (
+      select(Project)
+      .where(
+        Project.id == project_id,
+        Project.organization_id == organization_id,
+      )
+    )
+
+    result = await db.execute(stmt)
+    return result.scalar_one_or_none()
+
+class MilestoneRepository(BaseProjectRepository):
+  async def create(
+    self,
+    db: AsyncSession,
+    obj_in: dict,
+  ) -> Milestone:
+
     db_obj = Milestone(**obj_in)
     db.add(db_obj)
-    db.commit()
-    db.refresh(db_obj)
+    await db.commit()
+    await db.refresh(db_obj)
     return db_obj
 
-  def get_by_project(self, db: Session, project_id: str):
-    return db.query(Milestone).filter(Milestone.project_id == project_id).all()
+  async def get_by_project(
+    self,
+    db: AsyncSession,
+    project_id: str,
+  ) -> list[Milestone]:
 
-  def get_by_id(self, db: Session, milestone_id: str):
-    return db.query(Milestone).filter(Milestone.id == milestone_id).first()
+    stmt = (
+      select(Milestone)
+      .where(Milestone.project_id == project_id)
+    )
 
-class ProjectMemberRepository:
-    
-  def add_member(self, db: Session, project_id: str, user_id: str, role: str) -> ProjectMember:
-    db_obj = ProjectMember(project_id=project_id, user_id=user_id, role=role)
+    result = await db.execute(stmt)
+    return list(result.scalars().all())
+
+  async def get_by_id(
+    self,
+    db: AsyncSession,
+    milestone_id: str,
+  ) -> Milestone | None:
+
+    stmt = (
+      select(Milestone)
+      .where(Milestone.id == milestone_id)
+    )
+
+    result = await db.execute(stmt)
+    return result.scalar_one_or_none()
+
+class ProjectMemberRepository(BaseProjectRepository):
+  async def add_member(
+    self,
+    db: AsyncSession,
+    project_id: str,
+    user_id: UUID,
+    role,
+  ) -> ProjectMember:
+
+    db_obj = ProjectMember(
+      project_id=project_id,
+      user_id=user_id,
+      role=role,
+    )
     db.add(db_obj)
-    db.commit()
-    db.refresh(db_obj)
+    await db.commit()
+    await db.refresh(db_obj)
     return db_obj
 
-  def get_by_project(self, db: Session, project_id: str):
-    return db.query(ProjectMember).filter(ProjectMember.project_id == project_id).all()
+  async def get_by_project(
+    self,
+    db: AsyncSession,
+    project_id: str,
+  ) -> list[ProjectMember]:
 
-  def remove_member(self, db: Session, project_id: str, user_id: str):
-    db.query(ProjectMember).filter(
+    stmt = (
+      select(ProjectMember)
+      .where(ProjectMember.project_id == project_id)
+    )
+    result = await db.execute(stmt)
+    return list(result.scalars().all())
+
+  async def get_by_project_and_user(
+    self,
+    db: AsyncSession,
+    project_id: str,
+    user_id: UUID,
+  ) -> ProjectMember | None:
+
+    stmt = (
+      select(ProjectMember)
+      .where(
         ProjectMember.project_id == project_id,
-        ProjectMember.user_id == user_id
-    ).delete()
-    db.commit()
+        ProjectMember.user_id == user_id,
+      )
+    )
+    result = await db.execute(stmt)
+    return result.scalar_one_or_none()
+
+  async def remove_member(
+    self,
+    db: AsyncSession,
+    project_id: str,
+    user_id: UUID,
+  ) -> None:
+
+    stmt = (
+      delete(ProjectMember)
+      .where(
+        ProjectMember.project_id == project_id,
+        ProjectMember.user_id == user_id,
+      )
+    )
+    await db.execute(stmt)
+    await db.commit()
+
 client_repo = ClientRepository()
 project_repo = ProjectRepository()
 milestone_repo = MilestoneRepository()

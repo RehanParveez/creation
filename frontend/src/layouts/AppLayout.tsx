@@ -1,31 +1,18 @@
 import { useEffect, useState } from 'react'
-import {
-  Bell,
-  Building2,
-  ChevronDown,
-  LogOut,
-  Menu,
-  Settings,
-  Users,
-  X,
+import {Bell, Building2, ChevronDown, LogOut, Menu, HardHat, LayoutDashboard, Settings, Users, X,
 } from 'lucide-react'
-import {
-  Link,
-  Outlet,
-  useLocation,
-  useNavigate,
+import {Link, Outlet, useLocation, useNavigate,
 } from 'react-router-dom'
-
 import { useAuthStore } from '@/app/store'
 import { api } from '@/services/api'
 import BrandMark from '@/components/BrandMark'
 
 const navItems = [
-  { path: '/dashboard', label: 'Dashboard' },
-  { path: '/projects', label: 'Projects' },
-  { path: '/organizations', label: 'Organization' },
-  { path: '/team', label: 'Team' },
-  { path: '/settings', label: 'Settings' },
+  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, },
+  { path: '/projects', label: 'Projects', icon: HardHat, },
+  { path: '/organizations', label: 'Organization', icon: Building2, },
+  { path: '/team', label: 'Team', icon: Users, },
+  { path: '/settings', label: 'Settings', icon: Settings, },
 ]
 
 export default function AppLayout() {
@@ -48,7 +35,7 @@ export default function AppLayout() {
   }
 
   const initials =
-    user?.full_name
+    user?.first_name
       ?.split(' ')
       .slice(0, 2)
       .map((part) => part.charAt(0))
@@ -102,7 +89,7 @@ export default function AppLayout() {
             >
               <span className="cp-avatar">{initials}</span>
               <span className="hidden xl:block">
-                {user?.full_name || 'Account'}
+                {user?.first_name || 'Account'}
               </span>
               <ChevronDown className="h-3.5 w-3.5" />
             </button>
@@ -110,7 +97,7 @@ export default function AppLayout() {
             {profileOpen && (
               <div className="cp-profile-menu">
                 <div className="cp-profile-meta">
-                  <strong>{user?.full_name || 'Account'}</strong>
+                  <strong>{user?.first_name || 'Account'}</strong>
                   <span>{organization?.name || 'Workspace'}</span>
                 </div>
 

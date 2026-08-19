@@ -13,8 +13,7 @@ router = APIRouter(
   tags = ["organizations"],
 )
 
-@router.post(
-  "",
+@router.post("",
   response_model=OrganizationRead,
   status_code=status.HTTP_201_CREATED,
 )
@@ -118,7 +117,6 @@ async def get_members(
   db: AsyncSession = Depends(get_db),
 ):
   service = OrganizationService(db)
-
   return await service.list_members(
     current_user,
     organization_id,

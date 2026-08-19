@@ -135,7 +135,7 @@ class OrganizationRepository:
         OrganizationMembership.user_id == user_id,
       )
     )
-    return result.scalar_one_or_none() is not None
+    return await result.scalar_one_or_none() is not None
 
   async def get_role(
     self,
@@ -148,7 +148,6 @@ class OrganizationRepository:
       )
       .where(
         Role.id == role_id,
-        Role.is_active.is_(True),
       )
     )
     return result.scalar_one_or_none()
@@ -159,9 +158,6 @@ class OrganizationRepository:
       .options(
         selectinload(Role.permissions),
       )
-      .where(
-        Role.is_active.is_(True),
-      )
       .order_by(Role.name.asc())
     )
     return list(result.scalars().unique().all())
@@ -169,11 +165,7 @@ class OrganizationRepository:
   async def list_permissions(self) -> list[Permission]:
     result = await self.db.execute(
       select(Permission)
-      .where(
-        Permission.is_active.is_(True),
-      )
       .order_by(
-        Permission.domain.asc(),
         Permission.code.asc(),
       )
     )

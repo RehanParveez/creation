@@ -90,7 +90,7 @@ export default function DashboardPage() {
     }
   }, [organization, setOrganization, setOrganizations])
 
-  const firstName = user?.full_name?.split(' ')[0] || 'there'
+  const firstName = user?.first_name?.split(' ')[0] || 'there'
 
   return (
     <div className="mx-auto w-full max-w-[1420px] pb-12">

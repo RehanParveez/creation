@@ -255,7 +255,7 @@ class OrganizationService:
       data.role_id,
     )
     if role is None:
-      raise NotFoundException("Role")
+      raise NotFoundException("Role") 
 
     membership = OrganizationMembership(
       organization_id=organization_id,

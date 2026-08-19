@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '@/services/api'
-import { Membership, Role } from '../types'
+import type { Membership, Role } from '../types'
 import { Users, UserPlus, ArrowLeft, Shield, Mail, CheckCircle2 } from 'lucide-react'
 
 export default function TeamPage() {
@@ -153,7 +153,7 @@ export default function TeamPage() {
                     type="text"
                     value={inviteFullName}
                     onChange={(e) => setInviteFullName(e.target.value)}
-                    placeholder="John Doe"
+                    placeholder="Habi"
                     className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-zinc-100 text-sm focus:outline-none focus:border-amber-500"
                   />
                 </div>
@@ -164,7 +164,7 @@ export default function TeamPage() {
                     required
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
-                    placeholder="john@example.com"
+                    placeholder="habi@gmail.com"
                     className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-zinc-100 text-sm focus:outline-none focus:border-amber-500"
                   />
                 </div>

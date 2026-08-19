@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios'
+import type { Membership } from '@/modules/organizations/types'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8014'
 
@@ -67,7 +68,7 @@ export interface Membership {
 }
 
 class ApiService {
-  private client: AxiosInstance
+  public client: AxiosInstance
   private refreshPromise: Promise<string> | null = null
 
   constructor() {
@@ -214,7 +215,7 @@ class ApiService {
     return this.client.post(`/organizations/${orgId}/invite`, { email, role_id, full_name })
   }
 
-  async getMembers(orgId: string) {
+  async getMembers(orgId: string): Promise<Membership[]> {
     const res = await this.client.get(`/organizations/${orgId}/members`)
     return res.data as Membership[]
   }
