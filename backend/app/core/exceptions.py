@@ -28,6 +28,19 @@ class NotFoundException(TameerException):
       message=f"{resource} not found.",
       status_code=404,
     )
+    
+class ConflictException(TameerException):
+  def __init__(
+    self,
+    message: str = "Resource conflict.",
+    details: Optional[Dict[str, Any]] = None,
+  ):
+    super().__init__(
+      code="CONFLICT",
+      message=message,
+      status_code=409,
+      details=details,
+    )
 
 class ForbiddenException(TameerException):
   def __init__(self, message: str = "Access denied."):

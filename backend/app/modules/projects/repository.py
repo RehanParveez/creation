@@ -3,6 +3,7 @@ from uuid import UUID
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.projects.models import Client, Project, Milestone, ProjectMember
+from sqlalchemy.orm import selectinload
 
 class BaseProjectRepository:
   async def update(
@@ -60,17 +61,22 @@ class ClientRepository(BaseProjectRepository):
   async def get_by_id_and_org(
     self,
     db: AsyncSession,
-    client_id: str,
+    project_id: str,
     organization_id: UUID,
-  ) -> Client | None:
+) -> Project | None:
 
     stmt = (
-      select(Client)
+      select(Project)
+      .options(
+        selectinload(Project.milestones),
+        selectinload(Project.members),
+      )
       .where(
-        Client.id == client_id,
-        Client.organization_id == organization_id,
+        Project.id == project_id,
+        Project.organization_id == organization_id,
       )
     )
+
     result = await db.execute(stmt)
     return result.scalar_one_or_none()
 
@@ -97,14 +103,19 @@ class ProjectRepository(BaseProjectRepository):
     organization_id: UUID,
     skip: int = 0,
     limit: int = 100,
-  ) -> list[Project]:
+) -> list[Project]:
 
     stmt = (
       select(Project)
+      .options(
+        selectinload(Project.milestones),
+        selectinload(Project.members),
+      )
       .where(Project.organization_id == organization_id)
       .offset(skip)
       .limit(limit)
     )
+
     result = await db.execute(stmt)
     return list(result.scalars().all())
 

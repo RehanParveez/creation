@@ -2,12 +2,13 @@ from __future__ import annotations
 from uuid import UUID
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.dependencies.auth import get_db
+from app.dependencies.auth import get_db, get_current_user
 from app.dependencies.organization import get_current_organization_id, require_organization_permissions
 from app.modules.budgets.permissions import Permissions
 from app.modules.budgets.repository import budget_repo, budget_item_repo
 from app.modules.budgets.schemas import BudgetCreate, BudgetItemCreate, BudgetItemOut, BudgetItemUpdate, BudgetOut, BudgetUpdate
 from app.modules.budgets.service import BudgetService
+from app.modules.identity.models import User
 
 router = APIRouter()
 
@@ -304,9 +305,9 @@ async def submit_budget(
     Depends(
       require_organization_permissions(
         [Permissions.BUDGET_APPROVE]
-      )
-    )
-  ],
+            )
+        )
+    ],
 )
 async def approve_budget(
   budget_id: UUID,
@@ -314,13 +315,15 @@ async def approve_budget(
   organization_id: UUID = Depends(
     get_current_organization_id
   ),
-  current_user_id: UUID = Depends(...),
+  current_user: User = Depends(
+    get_current_user
+  ),
 ):
   return await BudgetService.approve_budget(
     db,
     budget_id,
     organization_id,
-    current_user_id,
+    current_user.id,
   )
 
 @router.post(
