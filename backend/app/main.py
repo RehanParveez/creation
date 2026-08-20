@@ -60,3 +60,7 @@ async def ready():
   return {"status": "ready", "checks": {"app": "ok"}}
 
 app.include_router(api_router, prefix = "/api/v1")
+for route in app.routes:
+  print("ROUTE:", getattr(route, "methods", None), getattr(route, "path", None),
+    getattr(route, "name", None),
+  )

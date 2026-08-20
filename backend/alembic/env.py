@@ -11,6 +11,7 @@ from app.models.base import Base
 import app.modules.identity.models 
 import app.modules.organizations.models
 import app.modules.projects.models
+import app.modules.budgets.models
 
 settings = get_settings()
 config = context.config
