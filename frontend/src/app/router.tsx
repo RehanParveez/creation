@@ -14,6 +14,8 @@ import OrganizationDetailsPage from '@/modules/organizations/pages/OrganizationD
 import TeamPage from '@/modules/organizations/pages/TeamPage'
 import {ProjectsPage, CreateProjectPage, ProjectDetailsPage, ClientsPage, ProjectClientsPage,
 } from '@/modules/projects'
+import {SiteLogsPage, SiteLogDetailPage,
+} from "@/modules/site_operations";
 
 export const router = createBrowserRouter([
   {
@@ -91,6 +93,17 @@ export const router = createBrowserRouter([
             path: '/projects/:projectId/client',
             element: <ProjectClientsPage />,
           },
+
+          {
+            path: '/projects/:projectId/site-logs',
+            element: <SiteLogsPage />,
+          },
+
+          { 
+            path: '/projects/:projectId/site-logs/:siteLogId',
+            element: <SiteLogDetailPage />,
+          },
+
           {
             path: '/clients',
             element: <ClientsPage />,

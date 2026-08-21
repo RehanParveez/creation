@@ -19,7 +19,7 @@ router = APIRouter()
   dependencies=[
     Depends(
       require_organization_permissions(
-        [Permissions.BUDGET_MANAGE]
+        [Permissions.BUDGET_CREATE]
       )
     )
   ],
@@ -45,7 +45,7 @@ async def create_budget(
   dependencies=[
     Depends(
       require_organization_permissions(
-        [Permissions.BUDGET_VIEW]
+        [Permissions.BUDGET_READ]
       )
     )
   ],
@@ -71,7 +71,7 @@ async def get_budgets(
   dependencies=[
     Depends(
       require_organization_permissions(
-        [Permissions.BUDGET_VIEW]
+        [Permissions.BUDGET_READ]
       )
     )
   ],
@@ -95,7 +95,7 @@ async def get_project_budget(
   dependencies=[
     Depends(
       require_organization_permissions(
-        [Permissions.BUDGET_VIEW]
+        [Permissions.BUDGET_READ]
       )
     )
   ],
@@ -119,7 +119,7 @@ async def get_budget(
   dependencies=[
     Depends(
       require_organization_permissions(
-        [Permissions.BUDGET_MANAGE]
+        [Permissions.BUDGET_UPDATE]
       )
     )
   ],
@@ -145,7 +145,7 @@ async def update_budget(
   dependencies=[
     Depends(
       require_organization_permissions(
-        [Permissions.BUDGET_MANAGE]
+        [Permissions.BUDGET_DELETE]
       )
     )
   ],
@@ -170,7 +170,7 @@ async def delete_budget(
   dependencies=[
     Depends(
       require_organization_permissions(
-        [Permissions.BUDGET_MANAGE]
+        [Permissions.BUDGET_UPDATE]
       )
     )
   ],
@@ -197,7 +197,7 @@ async def create_budget_item(
   dependencies=[
     Depends(
       require_organization_permissions(
-        [Permissions.BUDGET_VIEW]
+        [Permissions.BUDGET_READ]
       )
     )
   ],
@@ -226,7 +226,7 @@ async def get_budget_items(
   dependencies=[
     Depends(
       require_organization_permissions(
-        [Permissions.BUDGET_MANAGE]
+        [Permissions.BUDGET_UPDATE]
       )
     )
   ],
@@ -254,7 +254,7 @@ async def update_budget_item(
   dependencies=[
     Depends(
       require_organization_permissions(
-        [Permissions.BUDGET_MANAGE]
+        [Permissions.BUDGET_UPDATE]
       )
     )
   ],
@@ -280,7 +280,7 @@ async def delete_budget_item(
   dependencies=[
     Depends(
       require_organization_permissions(
-        [Permissions.BUDGET_MANAGE]
+        [Permissions.BUDGET_UPDATE]
       )
     )
   ],

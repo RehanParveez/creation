@@ -6,13 +6,16 @@ from app.core.exceptions import ForbiddenException
 from app.dependencies.auth import get_current_user
 
 IDENTITY_PERMISSIONS = {
-  "user.view": "View user accounts.",
-  "user.manage": "Manage user accounts.",
-  "role.view": "View roles.",
-  "role.manage": "Manage roles.",
-  "permission.view": "View permissions.",
+  "user:read": "View user accounts.",
+  "user:create": "Create user accounts.",
+  "user:update": "Update user accounts.",
+  "user:delete": "Delete user accounts.",
+  "role:read": "View roles.",
+  "role:create": "Create roles.",
+  "role:update": "Update roles.",
+  "role:delete": "Delete roles.",
+  "permission:read": "View permissions.",
 }
-
 def get_user_permission_codes(user: User) -> set[str]:
   return {
     permission.code
