@@ -2,6 +2,7 @@ from app.core.database import AsyncSessionLocal
 from app.modules.identity.seed import seed_identity_data
 from app.modules.projects.seed import seed_projects
 from app.modules.budgets.seed import seed_budget
+from app.modules.site_operations.seed import seed_site_operations
 import asyncio
 
 async def main() -> None:
@@ -14,6 +15,9 @@ async def main() -> None:
     
     print("Seeding budgets and budget items data...")
     await seed_budget(session)
+    
+    print("Seeding site and operations data...")
+    await seed_site_operations(session)
     
     print("All seeders completed")
 

@@ -58,28 +58,6 @@ class ClientRepository(BaseProjectRepository):
     result = await db.execute(stmt)
     return list(result.scalars().all())
 
-  async def get_by_id_and_org(
-    self,
-    db: AsyncSession,
-    project_id: str,
-    organization_id: UUID,
-) -> Project | None:
-
-    stmt = (
-      select(Project)
-      .options(
-        selectinload(Project.milestones),
-        selectinload(Project.members),
-      )
-      .where(
-        Project.id == project_id,
-        Project.organization_id == organization_id,
-      )
-    )
-
-    result = await db.execute(stmt)
-    return result.scalar_one_or_none()
-
 class ProjectRepository(BaseProjectRepository):
 
   async def create(
@@ -124,16 +102,19 @@ class ProjectRepository(BaseProjectRepository):
     db: AsyncSession,
     project_id: str,
     organization_id: UUID,
-  ) -> Project | None:
+) -> Project | None:
 
     stmt = (
       select(Project)
+      .options(
+        selectinload(Project.milestones),
+        selectinload(Project.members),
+      )
       .where(
         Project.id == project_id,
         Project.organization_id == organization_id,
       )
     )
-
     result = await db.execute(stmt)
     return result.scalar_one_or_none()
 
