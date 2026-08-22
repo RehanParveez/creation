@@ -16,6 +16,9 @@ import {ProjectsPage, CreateProjectPage, ProjectDetailsPage, ClientsPage, Projec
 } from '@/modules/projects'
 import {SiteLogsPage, SiteLogDetailPage,
 } from "@/modules/site_operations";
+import {MaterialRequisitionsPage, MaterialRequisitionCreatePage, MaterialRequisitionDetailsPage,
+} from '@/modules/materials_requests'
+import { SettingsPage } from '@/modules/settings'
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +58,12 @@ export const router = createBrowserRouter([
             path: '/dashboard',
             element: <DashboardPage />,
           },
+
+          {
+            path: '/settings',
+            element: <SettingsPage />,
+          },
+
           {
             path: '/organizations',
             element: <OrganizationsPage />,
@@ -107,6 +116,31 @@ export const router = createBrowserRouter([
           {
             path: '/clients',
             element: <ClientsPage />,
+          },
+
+          { 
+            path: '/projects/:projectId/material-requisitions',
+            element: <MaterialRequisitionsPage />,
+          },
+
+          {
+            path: '/projects/:projectId/material-requisitions/new',
+            element: <MaterialRequisitionCreatePage />,
+          },
+
+          {
+            path: '/projects/:projectId/material-requisitions/:requisitionId',
+            element: <MaterialRequisitionDetailsPage />,
+          },
+
+          {
+            path: '/material-requisitions',
+            element: <MaterialRequisitionsPage />,
+          },
+
+          {
+            path: '/material-requisitions/:requisitionId',
+            element: <MaterialRequisitionDetailsPage />,
           },
 
           {

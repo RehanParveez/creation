@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { User, Organization, Membership } from '@/services/api'
-import type {OrganizationMembership, OrganizationRole,
+import type {OrganizationMembership,
 } from '@/modules/organizations/types'
 
 interface AuthState {
