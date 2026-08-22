@@ -276,9 +276,5 @@ async def seed_identity_data(session: AsyncSession) -> None:
 
             if permission is not None:
                 role.permissions.append(permission)
-        
-        for code in desired_permissions:
-            if code in permission_map:
-                role.permissions.append(permission_map[code])
 
     await session.commit()

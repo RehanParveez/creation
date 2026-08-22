@@ -13,6 +13,7 @@ import app.modules.organizations.models
 import app.modules.projects.models
 import app.modules.budgets.models
 import app.modules.site_operations.models
+import app.modules.materials_requests.models
 
 settings = get_settings()
 config = context.config

@@ -1,0 +1,10 @@
+class Permissions:
+  MATERIAL_REQUISITION_READ = "material_requisition:read"
+  MATERIAL_REQUISITION_CREATE = "material_requisition:create"
+  MATERIAL_REQUISITION_UPDATE = "material_requisition:update"
+  MATERIAL_REQUISITION_DELETE = "material_requisition:delete"
+  MATERIAL_REQUISITION_SUBMIT = "material_requisition:submit"
+  MATERIAL_REQUISITION_APPROVE = "material_requisition:approve"
+  MATERIAL_REQUISITION_REJECT = "material_requisition:reject"
+  MATERIAL_REQUISITION_FULFILL = "material_requisition:fulfill"
+  MATERIAL_REQUISITION_CANCEL = "material_requisition:cancel"
